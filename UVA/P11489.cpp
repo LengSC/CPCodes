@@ -25,10 +25,10 @@ char s[1005];
 int main() {
 	read(t);
 	rep(j, 1, t) {
-		scanf("%s", s);
+		scanf("%s", s + 1);
 		memset(q, 0, sizeof(q));
-		rep(i, 0, strlen(s)) ++q[(s[i] - '0') % 3];
-		printf("Case %d: %c\n", j, ((q[(q[1] + q[2] * 2) % 3]) <= 0 || q[0] % 2 == 0) ? 'T' : 'S');
+		rep(i, 1, strlen(s + 1)) ++q[(s[i] - '0') % 3];
+		printf("Case %d: %c\n", j, (--q[(q[1] + q[2] * 2) % 3] < 0 || q[0] % 2 == 1) ? 'T' : 'S');
 	}
 	return 0;
 }
