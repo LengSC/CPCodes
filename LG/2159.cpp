@@ -1,26 +1,5 @@
 #include <bits/stdc++.h>
 
-#define R register
-#define eps 1e-12
-#define INF (1<<30)
-#define LL long long
-#define LINF (1ll<<60)
-#define MM(x, y) memset(x, y, sizeof x)
-#define Fo(i, x, y) for(R int i=x; i<=y; ++i)
-#define Ro(i, x, y) for(R int i=x; i>=y; --i)
-using namespace std;
-template<typename T> inline T Max(R T x, R T y) {return x > y ? x : y;}
-template<typename T> inline T Min(R T x, R T y) {return x < y ? x : y;}
-template<typename T> inline void in(R T &x)
-{
-    static int ch; static bool flag;
-    for(flag=false, ch=getchar(); ch<'0'||ch>'9'; ch=getchar()) flag |= ch=='-';
-    for(x=0; ch>='0'&&ch<='9'; ch=getchar()) x = (x<<1) + (x<<3) + ch - '0';
-    x = flag ? -x : x;
-}
-#define MD 100000000
-#define Big BigInt
-
 namespace SLV {
     #define rep(i, st, ed) for (int i = (st), _##i = (ed); i <= _##i; ++i)
     #define dep(i, st, ed) for (int i = (st), _##i = (ed); i < _##i; ++i)
