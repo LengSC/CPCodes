@@ -15,27 +15,39 @@ namespace SLV {
     using pii = pair<int, int>;
     namespace IO { template<typename T> void read(T &x) { x = 0; char c = getchar(); bool f = false; while (!isdigit(c)) f = (c == '-'), c = getchar(); while (isdigit(c)) x = (x << 1) + (x << 3) + (c ^ 48), c = getchar(); if (f) x = -x; } template<typename T, typename ...Nxt> void read(T &x, Nxt &...nxt) { read(x), read(nxt...); } } using namespace IO;
 
-    constexpr int N = 1.1e7 + 2;
+    constexpr int N = 2e4 + 2;
 
-    int p[N * 2];
+    int t, p[N * 2], mid, maxr, cnt, n, l, r, pre[N], cntp, suf[N], cnts;
     char a[N], s[N * 2];
 
-    int manacher(const char *a, int la) {
-        int res = 0, mid = 0, r = 0, cnt;
+    void solve() {
+        scanf("%s", a + 1);
+        mid = maxr = cntp = cnts = 0, n = strlen(a + 1);
         s[0] = '$', s[cnt = 1] = '|';
-        rep(i, 1, la) s[++cnt] = a[i], s[++cnt] = '|';
-        rep(i, 2, cnt) {
-            p[i] = i < r ? min(p[mid * 2 - i], r - i) : 1;
+        rep(i, 1, n) s[++cnt] = a[i], s[++cnt] = '|';
+        s[++cnt] = '%';
+        dep(i, 2, cnt) {
+            p[i] = i < maxr ? min(p[mid * 2 - i], maxr - i) : 1;
             while (s[i - p[i]] == s[i + p[i]]) ++p[i];
-            if (i + p[i] > r) mid = i, r = i + p[i];
-            res = max(res, p[i]);
+            if (i + p[i] > maxr) maxr = i + p[i], mid = i;
         }
-        return res - 1;
+        rep(i, 2, cnt - 2) {
+            if (p[i] == i) pre[++cntp] = i;
+            if (i + p[i] == cnt) suf[++cnts] = i;
+        }
+        rep(i, 1, cntp) rep(j, 1, cnts) {
+            l = pre[i] + p[pre[i]];
+            r = suf[j] - p[suf[j]];
+            mid = (l + r) / 2;
+            if (l > r || (l == r && s[mid] == '|')) continue;
+            if (p[pre[i]] * 2 - 1 + p[mid] * 2 - 1 + p[suf[j]] * 2 - 1 >= cnt)
+                return puts("Yes"), void();
+        }
+        puts("No");
     }
 
     int main() {
-        scanf("%s", a + 1);
-        printf("%d\n", manacher(a, strlen(a + 1)));
+        for (read(t); t; --t) solve();
         return 0;
     }
 }

@@ -17,35 +17,41 @@ namespace SLV {
 
     constexpr int N = 1e6 + 2;
 
-    int la, lb, pi[N];
-    char a[N], b[N];
-    vi ans;
+    int n, m, pi[N], j, fa[N][21], dep[N], x, y;
+    char s[N];
 
-    void pmt(const char *b, int lb) {
-        int j = 0;
-        rep(i, 2, lb) {
-            while (j && b[i] != b[j + 1]) j = pi[j];
-            if (b[i] == b[j + 1]) ++j;
-            pi[i] = j;
-        }
-    }
-
-    void kmp(const char *a, int la, const char *b, int lb) {
-        pmt(b, lb);
-        int j = 0;
-        rep(i, 1, la) {
-            while (j && a[i] != b[j + 1]) j = pi[j];
-            if (a[i] == b[j + 1]) ++j;
-            if (j == lb) ans.eb(i - lb + 1), j = pi[j];
-        }
+    int lca(int u, int v) {
+        if (dep[u] < dep[v]) swap(u, v);
+        int d = dep[u] - dep[v];
+        per(i, 20, 0)
+            if (d & (1 << i)) u = fa[u][i];
+        if (u == v) return u;
+        per(i, 20, 0)
+            if (fa[u][i] != fa[v][i]) u = fa[u][i], v = fa[v][i];
+        return fa[u][0];
     }
 
     int main() {
-        scanf("%s%s", a + 1, b + 1);
-        la = strlen(a + 1), lb = strlen(b + 1);
-        kmp(a, la, b, lb);
-        for (const auto &i: ans) printf("%d\n", i);
-        rep(i, 1, lb) printf("%d ", pi[i]);
+        scanf("%s", s + 1);
+        n = strlen(s + 1);
+        read(m);
+        rep(i, 2, n) {
+            while (j && s[i] != s[j + 1]) j = pi[j];
+            if (s[i] == s[j + 1]) ++j;
+            pi[i] = j;
+        }
+        rep(u, 1, n) {
+            fa[u][0] = pi[u];
+            dep[u] = dep[pi[u]] + 1;
+            for (int i = 1; i <= 20; ++i)
+                fa[u][i] = fa[fa[u][i - 1]][i - 1];
+        }
+        rep(i, 1, m) {
+            read(x, y);
+            int l = lca(x, y);
+            if (l == x || l == y) printf("%d\n", fa[l][0]);
+            else printf("%d\n", l);
+        }
         return 0;
     }
 }

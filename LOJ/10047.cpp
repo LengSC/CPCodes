@@ -15,37 +15,26 @@ namespace SLV {
     using pii = pair<int, int>;
     namespace IO { template<typename T> void read(T &x) { x = 0; char c = getchar(); bool f = false; while (!isdigit(c)) f = (c == '-'), c = getchar(); while (isdigit(c)) x = (x << 1) + (x << 3) + (c ^ 48), c = getchar(); if (f) x = -x; } template<typename T, typename ...Nxt> void read(T &x, Nxt &...nxt) { read(x), read(nxt...); } } using namespace IO;
 
-    constexpr int N = 1e6 + 2;
+    constexpr int N = 1.5e4 + 2;
 
-    int la, lb, pi[N];
-    char a[N], b[N];
-    vi ans;
+    int k, pi[N], ans;
+    char s[N];
 
-    void pmt(const char *b, int lb) {
-        int j = 0;
-        rep(i, 2, lb) {
-            while (j && b[i] != b[j + 1]) j = pi[j];
-            if (b[i] == b[j + 1]) ++j;
-            pi[i] = j;
-        }
-    }
-
-    void kmp(const char *a, int la, const char *b, int lb) {
-        pmt(b, lb);
-        int j = 0;
-        rep(i, 1, la) {
-            while (j && a[i] != b[j + 1]) j = pi[j];
-            if (a[i] == b[j + 1]) ++j;
-            if (j == lb) ans.eb(i - lb + 1), j = pi[j];
+    void calc(const char *s) {
+        int j = 0, f, l = strlen(s + 1);
+        rep(i, 2, l) {
+            while (j && s[i] != s[j + 1]) j = pi[j];
+            if (s[i] == s[j + 1]) ++j;
+            f = pi[i] = j;
+            while (f && 2 * f >= i) f = pi[f];
+            if (f >= k) ++ans;
         }
     }
 
     int main() {
-        scanf("%s%s", a + 1, b + 1);
-        la = strlen(a + 1), lb = strlen(b + 1);
-        kmp(a, la, b, lb);
-        for (const auto &i: ans) printf("%d\n", i);
-        rep(i, 1, lb) printf("%d ", pi[i]);
+        scanf("%s", s + 1), read(k);
+        rep(i, 0, strlen(s + 1) - k) calc(s + i);
+        printf("%d\n", ans);
         return 0;
     }
 }

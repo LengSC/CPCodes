@@ -15,37 +15,41 @@ namespace SLV {
     using pii = pair<int, int>;
     namespace IO { template<typename T> void read(T &x) { x = 0; char c = getchar(); bool f = false; while (!isdigit(c)) f = (c == '-'), c = getchar(); while (isdigit(c)) x = (x << 1) + (x << 3) + (c ^ 48), c = getchar(); if (f) x = -x; } template<typename T, typename ...Nxt> void read(T &x, Nxt &...nxt) { read(x), read(nxt...); } } using namespace IO;
 
-    constexpr int N = 1e6 + 2;
+    constexpr int N = 2e7 + 2;
 
-    int la, lb, pi[N];
+    int la, lb, z[N], p[N];
     char a[N], b[N];
-    vi ans;
+    ll ans;
 
-    void pmt(const char *b, int lb) {
-        int j = 0;
+    void zalgo(const char *b, int lb) {
+        z[1] = lb;
+        int l = 0, r = 0;
         rep(i, 2, lb) {
-            while (j && b[i] != b[j + 1]) j = pi[j];
-            if (b[i] == b[j + 1]) ++j;
-            pi[i] = j;
+            if (i <= r) z[i] = min(z[i - l + 1], r - i + 1);
+            while (i + z[i] <= lb && b[i + z[i]] == b[z[i] + 1]) ++z[i];
+            if (i + z[i] - 1 > r) l = i, r = i + z[i] - 1;
         }
     }
 
-    void kmp(const char *a, int la, const char *b, int lb) {
-        pmt(b, lb);
-        int j = 0;
+    void exkmp(const char *a, int la, const char *b, int lb) {
+        zalgo(b, lb);
+        int l = 0, r = 0;
         rep(i, 1, la) {
-            while (j && a[i] != b[j + 1]) j = pi[j];
-            if (a[i] == b[j + 1]) ++j;
-            if (j == lb) ans.eb(i - lb + 1), j = pi[j];
+            if (i <= r) p[i] = min(z[i - l + 1], r - i + 1);
+            while (i + p[i] <= la && a[i + p[i]] == b[p[i] + 1]) ++p[i];
+            if (i + p[i] - 1 > r) l = i, r = i + p[i] - 1;
         }
     }
 
     int main() {
         scanf("%s%s", a + 1, b + 1);
         la = strlen(a + 1), lb = strlen(b + 1);
-        kmp(a, la, b, lb);
-        for (const auto &i: ans) printf("%d\n", i);
-        rep(i, 1, lb) printf("%d ", pi[i]);
+        exkmp(a, la, b, lb);
+        rep(i, 1, lb) ans ^= (ll)i * (z[i] + 1);
+        printf("%lld\n", ans);
+        ans = 0;
+        rep(i, 1, la) ans ^= (ll)i * (p[i] + 1);
+        printf("%lld\n", ans);
         return 0;
     }
 }

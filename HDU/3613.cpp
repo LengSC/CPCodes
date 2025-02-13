@@ -15,37 +15,35 @@ namespace SLV {
     using pii = pair<int, int>;
     namespace IO { template<typename T> void read(T &x) { x = 0; char c = getchar(); bool f = false; while (!isdigit(c)) f = (c == '-'), c = getchar(); while (isdigit(c)) x = (x << 1) + (x << 3) + (c ^ 48), c = getchar(); if (f) x = -x; } template<typename T, typename ...Nxt> void read(T &x, Nxt &...nxt) { read(x), read(nxt...); } } using namespace IO;
 
-    constexpr int N = 1e6 + 2;
+    constexpr int N = 5e5 + 2;
 
-    int la, lb, pi[N];
-    char a[N], b[N];
-    vi ans;
+    int t, n, mid, maxr, p[N * 2], sum[N * 2], cnt, w[26], ans, tmp, x, y;
+    char a[N], s[N * 2];
 
-    void pmt(const char *b, int lb) {
-        int j = 0;
-        rep(i, 2, lb) {
-            while (j && b[i] != b[j + 1]) j = pi[j];
-            if (b[i] == b[j + 1]) ++j;
-            pi[i] = j;
+    void solve() {
+        dep(i, 0, 26) read(w[i]);
+        scanf("%s", a + 1);
+        mid = maxr = ans = 0, n = strlen(a + 1);
+        s[0] = '$', s[cnt = 1] = '|';
+        rep(i, 1, n) s[++cnt] = a[i], s[++cnt] = '|';
+        rep(i, 2, cnt) {
+            p[i] = i < maxr ? min(p[mid * 2 - i], maxr - i) : 1;
+            while (s[i - p[i]] == s[i + p[i]]) ++p[i];
+            if (i + p[i] > maxr) maxr = i + p[i], mid = i;
         }
-    }
-
-    void kmp(const char *a, int la, const char *b, int lb) {
-        pmt(b, lb);
-        int j = 0;
-        rep(i, 1, la) {
-            while (j && a[i] != b[j + 1]) j = pi[j];
-            if (a[i] == b[j + 1]) ++j;
-            if (j == lb) ans.eb(i - lb + 1), j = pi[j];
+        rep(i, 2, cnt) sum[i] = sum[i - 1] + (s[i] == '|' ? 0 : w[s[i] - 'a']);
+        for (int i = 3; i <= cnt - 2; i += 2) {
+            tmp = 0;
+            x = (1 + i) / 2, y = (i + cnt) / 2;
+            if (x == p[x]) tmp += sum[i];
+            if (cnt - y + 1 == p[y]) tmp += sum[cnt] - sum[i];
+            ans = max(ans, tmp);
         }
+        printf("%d\n", ans);
     }
 
     int main() {
-        scanf("%s%s", a + 1, b + 1);
-        la = strlen(a + 1), lb = strlen(b + 1);
-        kmp(a, la, b, lb);
-        for (const auto &i: ans) printf("%d\n", i);
-        rep(i, 1, lb) printf("%d ", pi[i]);
+        for (read(t); t; --t) solve();
         return 0;
     }
 }
