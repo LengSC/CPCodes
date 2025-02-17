@@ -29,12 +29,6 @@ namespace PERSEG {
 
     int cnt, root[N];
 
-    void build(int &cur, int l, int r) {
-        cur = ++cnt;
-        if (l == r) return;
-        build(ls(cur), l, mid), build(rs(cur), mid + 1, r);
-    }
-
     void modify(int &cur, int l, int r) {
         tr[++cnt] = tr[cur], cur = cnt, ++tr[cur].sum;
         if (l == r) return;
@@ -58,7 +52,6 @@ int main() {
     rep(i, 1, n) read(a[i]), b[i] = a[i];
     sort(b + 1, b + 1 + n);
     len = unique(b + 1, b + 1 + n) - b - 1;
-    build(root[0], 1, len);
     rep(i, 1, n) {
         p = lower_bound(b + 1, b + 1 + len, a[i]) - b;
         root[i] = root[i - 1];
